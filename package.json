@@ -1,0 +1,40 @@
+{
+  "name": "mimir",
+  "version": "0.1.0",
+  "description": "CLI that turns AI-assisted coding into durable knowledge (study-driven development)",
+  "type": "module",
+  "bin": {
+    "mimir": "./dist/cli.js"
+  },
+  "main": "./dist/cli.js",
+  "types": "./dist/cli.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "node --import tsx src/cli.ts",
+    "start": "node dist/cli.js",
+    "typecheck": "tsc --noEmit",
+    "prepare": "npm run build"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "cli",
+    "learning",
+    "openspec",
+    "study",
+    "notes"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "commander": "^13.1.0"
+  }
+}
