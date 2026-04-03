@@ -15,6 +15,7 @@ export async function runSessionAddReference(opts: {
   lineStart?: string;
   lineEnd?: string;
   snippet?: string;
+  language?: string;
 }): Promise<void> {
   const { id } = await svc.addReference({
     label: opts.label,
@@ -22,6 +23,7 @@ export async function runSessionAddReference(opts: {
     lineStart: parseOptionalInt(opts.lineStart),
     lineEnd: parseOptionalInt(opts.lineEnd),
     snippet: opts.snippet,
+    language: opts.language,
   });
   console.log(`Reference added (id: ${id}).`);
 }

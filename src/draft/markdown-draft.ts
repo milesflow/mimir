@@ -166,7 +166,12 @@ export function renderReferencesMarkdown(refs: SessionReference[]): string {
       blocks.push("", `- **Path:** \`${r.path}\`${loc}`, "");
     }
     if (r.snippet?.trim()) {
-      blocks.push("```", r.snippet.trimEnd(), "```", "");
+      const lang = r.language?.trim();
+      if (lang) {
+        blocks.push(`\`\`\`${lang}`, r.snippet.trimEnd(), "```", "");
+      } else {
+        blocks.push("```", r.snippet.trimEnd(), "```", "");
+      }
     }
   }
   return blocks.join("\n").trimEnd();
@@ -182,10 +187,16 @@ export function finalizeDraftFrontmatter(
     metadata: Record<string, unknown>;
   }
 ): string {
+  const yamlKeyForMetadataKey = (k: string): string => {
+    // Tags are meant to be first-class filterable YAML keys, not meta_* blobs.
+    if (k === "tags" || k.startsWith("tags_")) return k;
+    return `meta_${k}`;
+  };
+
   const metaKeyNames = new Set(
     Object.keys(input.metadata)
       .filter((k) => /^[a-zA-Z0-9_-]+$/.test(k))
-      .map((k) => `meta_${k}:`)
+      .map((k) => `${yamlKeyForMetadataKey(k)}:`)
   );
   const kept = frontmatterBlock
     .split("\n")
@@ -204,7 +215,7 @@ export function finalizeDraftFrontmatter(
 
   for (const [k, v] of Object.entries(input.metadata)) {
     if (!/^[a-zA-Z0-9_-]+$/.test(k)) continue;
-    const metaKey = `meta_${k}`;
+    const metaKey = yamlKeyForMetadataKey(k);
     if (typeof v === "string" || typeof v === "number" || typeof v === "boolean") {
       out.push(`${metaKey}: ${yamlQuoted(String(v))}`);
     } else {

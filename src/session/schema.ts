@@ -11,6 +11,8 @@ export type SessionReference = {
   lineStart?: number;
   lineEnd?: number;
   snippet?: string;
+  /** Optional language identifier for code fences (e.g. "swift", "typescript"). */
+  language?: string;
 };
 
 export type ActiveSession = {
@@ -75,6 +77,17 @@ function parseReference(raw: unknown, index: number): SessionReference {
       throw new SessionValidationError(`references[${index}].snippet must be a string.`);
     }
     ref.snippet = o.snippet;
+  }
+  if (o.language !== undefined) {
+    if (typeof o.language !== "string") {
+      throw new SessionValidationError(`references[${index}].language must be a string.`);
+    }
+    const lang = o.language.trim();
+    if (lang.length === 0) {
+      throw new SessionValidationError(`references[${index}].language must not be empty.`);
+    }
+    // Keep it as a raw language id; consumers decide how to format it in Markdown.
+    ref.language = lang;
   }
   return ref;
 }

@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   appendSectionBody,
   buildInitialDraftMarkdown,
+  finalizeDraftFrontmatter,
   parseDraftMarkdown,
   patchSectionBody,
   renderReferencesMarkdown,
@@ -60,8 +61,31 @@ test("renderReferencesMarkdown renders snippet block", () => {
       lineStart: 1,
       lineEnd: 10,
       snippet: "class X {}",
+      language: "swift",
     },
   ]);
   assert.match(text, /VC\.swift/);
   assert.match(text, /class X/);
+  assert.match(text, /```swift/);
+});
+
+test("finalizeDraftFrontmatter keeps tags_ keys without meta_ prefix", () => {
+  const md = buildInitialDraftMarkdown({
+    id: "id",
+    startedAt: "2026-01-01T00:00:00.000Z",
+    topic: "Q",
+    mimirVersion: "0.1.0",
+  });
+  const parsed = parseDraftMarkdown(md);
+  const endedAt = "2026-01-02T00:00:00.000Z";
+  const frontmatter = finalizeDraftFrontmatter(parsed.frontmatterBlock, {
+    endedAt,
+    metadata: {
+      tags_technology: "swift",
+      tags_has_algorithm: true,
+    },
+  });
+
+  assert.match(frontmatter, /tags_technology:/);
+  assert.ok(!/meta_tags_technology/.test(frontmatter));
 });

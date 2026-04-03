@@ -220,6 +220,7 @@ export class SessionDraftService {
     lineStart?: number;
     lineEnd?: number;
     snippet?: string;
+    language?: string;
   }): Promise<{ id: string }> {
     const { session } = await this.load();
     if (!session.draftPath) {
@@ -234,6 +235,14 @@ export class SessionDraftService {
         `Snippet exceeds maximum length (${MAX_SNIPPET_CHARS} characters).`
       );
     }
+    const langRaw = input.language;
+    const lang = langRaw?.trim();
+    if (lang !== undefined && lang.length === 0) {
+      throw new SessionIOError("language, when provided, must not be empty.");
+    }
+    if (lang !== undefined && lang.length > 50) {
+      throw new SessionIOError("language identifier too long (max 50 characters).");
+    }
 
     const ref: SessionReference = {
       id: randomUUID(),
@@ -242,6 +251,7 @@ export class SessionDraftService {
       lineStart: input.lineStart,
       lineEnd: input.lineEnd,
       snippet: input.snippet,
+      language: lang ?? undefined,
     };
 
     session.references.push(ref);

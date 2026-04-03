@@ -106,6 +106,12 @@ async function main(): Promise<void> {
           .describe("Start line (1-based optional convention per project)"),
         lineEnd: z.number().int().nonnegative().optional().describe("End line"),
         snippet: z.string().optional().describe("Quoted code or excerpt"),
+        language: z
+          .string()
+          .optional()
+          .describe(
+            "Optional language identifier for Markdown code fences (e.g. 'swift', 'typescript')."
+          ),
       },
     },
     async (input) => {
@@ -115,6 +121,7 @@ async function main(): Promise<void> {
         lineStart: input.lineStart,
         lineEnd: input.lineEnd,
         snippet: input.snippet,
+        language: input.language,
       });
       return {
         content: [{ type: "text", text: JSON.stringify({ ok: true, id }) }],
@@ -187,11 +194,109 @@ async function main(): Promise<void> {
     "mimir_end_session",
     {
       description:
-        "End the active study session and publish the Markdown note under the configured notes directory (same behavior as `mimir end`).",
-      inputSchema: {},
+        "End the active study session and publish the Markdown note. From Cursor/MCP this enforces non-empty draft sections and at least one tags_* metadata key after merge—call mimir_get_session (includeDraftBody:true) first, then pass sections + tags from the conversation. Default sectionsStrategy is append. Use skipMimirEndGuards only for rare bypass. CLI `mimir end` has no such enforcement.",
+      inputSchema: z
+        .object({
+          sections: z
+            .object({
+              explanation: z.string().optional(),
+              summary: z.string().optional(),
+              key_concepts: z.string().optional(),
+            })
+            .optional(),
+          sectionsStrategy: z
+            .enum(["onlyFillEmpty", "overwrite", "append"])
+            .optional()
+            .describe(
+              "MCP default: append. onlyFillEmpty fills blanks only; overwrite replaces; append appends to existing section body."
+            ),
+          tags: z
+            .object({
+              technology: z
+                .enum([
+                  "swift",
+                  "swiftui",
+                  "typescript",
+                  "javascript",
+                  "nodejs",
+                  "react",
+                  "nextjs",
+                  "python",
+                  "java",
+                  "kotlin",
+                  "rust",
+                  "go",
+                  "csharp",
+                  ".net",
+                  "postgres",
+                  "mysql",
+                  "mongodb",
+                  "redis",
+                  "graphql",
+                  "rest",
+                  "docker",
+                  "kubernetes",
+                  "aws",
+                  "gcp",
+                  "azure",
+                  "openapi",
+                  "sql",
+                  "other",
+                ])
+                .optional(),
+              technologyOther: z.string().optional(),
+              topic: z
+                .enum([
+                  "architecture",
+                  "api",
+                  "performance",
+                  "security",
+                  "authentication",
+                  "authorization",
+                  "database",
+                  "concurrency",
+                  "testing",
+                  "observability",
+                  "ui",
+                  "mobile",
+                  "refactor",
+                  "feature",
+                  "bugfix",
+                  "business-logic",
+                  "data-processing",
+                  "design",
+                  "other",
+                ])
+                .optional(),
+              topicOther: z.string().optional(),
+              hasAlgorithm: z.boolean().optional(),
+              businessRule: z.boolean().optional(),
+              architecture: z.boolean().optional(),
+            })
+            .optional(),
+          metadata: z.record(z.string(), z.any()).optional(),
+          metadataReplace: z.boolean().optional(),
+          references: z
+            .array(
+              z.object({
+                label: z.string().optional(),
+                path: z.string().optional(),
+                lineStart: z.number().int().nonnegative().optional(),
+                lineEnd: z.number().int().nonnegative().optional(),
+                snippet: z.string().optional(),
+                language: z.string().optional(),
+              })
+            )
+            .optional(),
+          skipMimirEndGuards: z
+            .boolean()
+            .optional()
+            .describe("Bypass MCP checks (empty sections / missing tags). Prefer fixing payload instead."),
+        })
+        .partial(),
     },
-    async () => {
-      const { publishedPath } = await endSessionAndPublish();
+    async (input) => {
+      const { publishedPath } = await endSessionAndPublish(input, { source: "mcp" });
       return {
         content: [
           {

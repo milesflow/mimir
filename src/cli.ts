@@ -115,6 +115,7 @@ sessionCmd
   .option("--line-start <n>", "Start line number")
   .option("--line-end <n>", "End line number")
   .option("--snippet <text>", "Code or excerpt text")
+  .option("--language <lang>", "Optional language identifier for Markdown code fences (e.g. swift, typescript)")
   .option("--snippet-file <path>", "Read snippet from file (instead of --snippet)")
   .action(
     async (opts: {
@@ -124,6 +125,7 @@ sessionCmd
       lineEnd?: string;
       snippet?: string;
       snippetFile?: string;
+      language?: string;
     }) => {
       try {
         let snippet = opts.snippet;
@@ -137,6 +139,7 @@ sessionCmd
           lineStart: opts.lineStart,
           lineEnd: opts.lineEnd,
           snippet,
+          language: opts.language,
         });
       } catch (e: unknown) {
         const msg = e instanceof Error ? e.message : String(e);
