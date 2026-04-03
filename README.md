@@ -62,6 +62,8 @@ While a session is open, Mimir keeps a **draft Markdown file** under `<notesDir>
 | `mimir session patch-section` | Replace **explanation**, **summary**, or **key_concepts** |
 | `mimir session append-section` | Append Markdown to those sections |
 
+To discard the active session (without publishing a note), use the top-level command `mimir cancel`.
+
 ### Study sessions
 
 - Grounded in real questions from the developer.
