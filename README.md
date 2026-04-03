@@ -1,5 +1,7 @@
 # Mimir
 
+![Mimir](assets/mimir.png)
+
 Mimir is a CLI that turns day-to-day coding work into **durable knowledge** (inspired by [OpenSpec](https://github.com/Fission-AI/OpenSpec) and spec-driven workflows).
 
 It lets you run **study sessions** on code, technical decisions, and business logic, work with an AI agent to understand what was done, and automatically save that learning as **structured, reusable notes**.
