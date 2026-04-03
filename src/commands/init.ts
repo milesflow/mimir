@@ -1,5 +1,6 @@
 import { homedir } from "node:os";
 import path from "node:path";
+import { createInterface } from "node:readline/promises";
 
 import {
   configExists,
@@ -13,6 +14,11 @@ import { getConfigFilePath } from "../config/paths.js";
 export type InitOptions = {
   /** If set, used as notes directory (resolved to absolute). */
   notesDir?: string;
+  /**
+   * True when `--notes-dir` was passed on the CLI (disables interactive prompt).
+   * When false/omitted without a TTY, the default notes directory is used.
+   */
+  notesDirFromCli?: boolean;
   /** Install Cursor slash-command templates into `./.cursor/commands` under cwd. */
   cursor?: boolean;
   /** Overwrite existing command files (requires `cursor`). */
@@ -21,6 +27,43 @@ export type InitOptions = {
 
 function defaultNotesDir(): string {
   return path.join(homedir(), "Documents", "mimir-notes");
+}
+
+/** Exported for tests: maps one prompt line to `notesDir` (default when empty). */
+export function resolvedNotesDirFromPromptLine(
+  line: string,
+  defaultDir: string
+): string {
+  const trimmed = line.trim();
+  return trimmed === "" ? defaultDir : path.resolve(trimmed);
+}
+
+async function readOneLineFromTty(prompt: string): Promise<string> {
+  if (process.stdin.isTTY !== true) {
+    throw new Error("readOneLineFromTty requires an interactive stdin TTY");
+  }
+  const rl = createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  try {
+    return await rl.question(prompt);
+  } finally {
+    rl.close();
+  }
+}
+
+async function resolveFirstTimeNotesDir(options: InitOptions): Promise<string> {
+  if (options.notesDirFromCli === true) {
+    return path.resolve(options.notesDir ?? "");
+  }
+  if (process.stdin.isTTY === true) {
+    const defaultPath = defaultNotesDir();
+    const prompt = `Directory for study notes (press Enter for default: ${defaultPath}): `;
+    const line = await readOneLineFromTty(prompt);
+    return resolvedNotesDirFromPromptLine(line, defaultPath);
+  }
+  return defaultNotesDir();
 }
 
 /**
@@ -40,7 +83,7 @@ export async function runInit(options: InitOptions = {}): Promise<void> {
     console.log(`Config: ${configPath}`);
     console.log(`Notes directory: ${existing.notesDir}`);
   } else {
-    const notesDir = path.resolve(options.notesDir ?? defaultNotesDir());
+    const notesDir = await resolveFirstTimeNotesDir(options);
     await ensureNotesDir(notesDir);
     await writeConfig({ notesDir });
 

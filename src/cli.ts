@@ -49,6 +49,7 @@ program
         }
         await runInit({
           notesDir: opts.notesDir,
+          notesDirFromCli: opts.notesDir !== undefined,
           cursor: opts.cursor === true,
           cursorForce: opts.cursorForce === true,
         });
