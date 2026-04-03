@@ -18,4 +18,12 @@ export async function runStatus(): Promise<void> {
   if (session.cwd !== undefined) {
     console.log(`  cwd:        ${session.cwd}`);
   }
+  if (session.draftPath !== undefined) {
+    console.log(`  draft:      ${session.draftPath}`);
+  }
+  console.log(`  references: ${session.references.length}`);
+  const metaKeys = Object.keys(session.metadata);
+  if (metaKeys.length > 0) {
+    console.log(`  metadata:   ${metaKeys.join(", ")}`);
+  }
 }

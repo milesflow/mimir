@@ -4,7 +4,8 @@
   "description": "CLI that turns AI-assisted coding into durable knowledge (study-driven development)",
   "type": "module",
   "bin": {
-    "mimir": "./dist/cli.js"
+    "mimir": "./dist/cli.js",
+    "mimir-mcp": "./dist/mcp-server.js"
   },
   "main": "./dist/cli.js",
   "types": "./dist/cli.d.ts",
@@ -14,7 +15,9 @@
   "scripts": {
     "build": "tsc",
     "dev": "node --import tsx src/cli.ts",
+    "dev:mcp": "node --import tsx src/mcp-server.ts",
     "start": "node dist/cli.js",
+    "test": "node --import tsx --test src/**/*.test.ts",
     "typecheck": "tsc --noEmit",
     "prepare": "npm run build"
   },
@@ -35,6 +38,8 @@
     "typescript": "^5.8.2"
   },
   "dependencies": {
-    "commander": "^13.1.0"
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "commander": "^13.1.0",
+    "zod": "^4.3.6"
   }
 }

@@ -29,15 +29,23 @@ export type BuildStudyNoteResult = {
   contents: string;
 };
 
+/** Published note filename (same rule for draft-finalized and legacy notes). */
+export function buildPublishedFilename(
+  session: Pick<BuildStudyNoteInput["session"], "id" | "topic">,
+  endedAt: string
+): string {
+  const datePrefix = endedAt.slice(0, 10);
+  const shortId = session.id.replace(/-/g, "").slice(0, 8);
+  const slug = slugTopic(session.topic);
+  return `${datePrefix}-${slug}-${shortId}.md`;
+}
+
 /**
  * Builds Markdown note filename and body (YAML frontmatter + section template).
  */
 export function buildStudyNote(input: BuildStudyNoteInput): BuildStudyNoteResult {
   const { session, endedAt, mimirVersion } = input;
-  const datePrefix = endedAt.slice(0, 10);
-  const shortId = session.id.replace(/-/g, "").slice(0, 8);
-  const slug = slugTopic(session.topic);
-  const filename = `${datePrefix}-${slug}-${shortId}.md`;
+  const filename = buildPublishedFilename(session, endedAt);
 
   const lines: string[] = ["---"];
   lines.push(`mimir_session_id: ${yamlDoubleQuoted(session.id)}`);

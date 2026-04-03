@@ -50,6 +50,15 @@ Mimir is a flow where work can become a learning session:
 | `mimir status` | Show the active session              |
 | `mimir end`    | End session and generate a note      |
 
+While a session is open, Mimir keeps a **draft Markdown file** under `<notesDir>/.mimir/drafts/<session-id>.md`. Update it with:
+
+| Command | Purpose |
+| ------- | ------- |
+| `mimir session add-reference` | Attach code/path/snippet; refreshes the **References** section |
+| `mimir session set-metadata` | Merge JSON metadata (exported into YAML on `end`) |
+| `mimir session patch-section` | Replace **explanation**, **summary**, or **key_concepts** |
+| `mimir session append-section` | Append Markdown to those sections |
+
 ### Study sessions
 
 - Grounded in real questions from the developer.
@@ -91,11 +100,36 @@ npm link
 mimir --help
 ```
 
+### MCP server (Cursor / MCP clients)
+
+After `npm run build` and `npm link` (or using absolute paths), run the **stdio** MCP server with the `mimir-mcp` binary. Example **Cursor** user config:
+
+```json
+{
+  "mcpServers": {
+    "mimir": {
+      "command": "mimir-mcp",
+      "args": []
+    }
+  }
+}
+```
+
+If `mimir-mcp` is not on your `PATH`, set `"command"` to your Node binary and `"args": ["/absolute/path/to/mimir/dist/mcp-server.js"]` (or use `node` with the repo’s built file).
+
+Tools exposed: `mimir_get_session`, `mimir_add_reference`, `mimir_patch_section`, `mimir_append_section`, `mimir_set_metadata` (same behavior as the `mimir session` CLI).
+
+Develop without installing globally:
+
+```bash
+npm run dev:mcp
+```
+
 ---
 
 ## Post-MVP ideas
 
-- Editor integration (VS Code / Cursor).
+- Richer editor integration beyond MCP.
 - Automatic context (git, diff, files).
 - Quizzes and active recall.
 - Semantic search across sessions.
