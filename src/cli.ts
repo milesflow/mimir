@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 
+import { runEnd } from "./commands/end.js";
 import { runInit } from "./commands/init.js";
+import { runStart } from "./commands/start.js";
+import { runStatus } from "./commands/status.js";
 
 const program = new Command();
 
@@ -29,22 +32,45 @@ program
 program
   .command("start")
   .description("Start a study session")
-  .action(() => {
-    console.log("mimir start — coming soon: open a study session.");
+  .requiredOption("--topic <text>", "Initial question or title for this session")
+  .option("--no-cwd", "Do not record current working directory")
+  .action(async (opts: { topic: string; noCwd?: boolean }) => {
+    try {
+      await runStart({
+        topic: opts.topic,
+        recordCwd: opts.noCwd !== true,
+      });
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error(msg);
+      process.exit(1);
+    }
   });
 
 program
   .command("status")
   .description("Show the active session")
-  .action(() => {
-    console.log("mimir status — coming soon: show active session.");
+  .action(async () => {
+    try {
+      await runStatus();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error(msg);
+      process.exit(1);
+    }
   });
 
 program
   .command("end")
   .description("End session and generate a note (Markdown + frontmatter)")
-  .action(() => {
-    console.log("mimir end — coming soon: write structured note.");
+  .action(async () => {
+    try {
+      await runEnd();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error(msg);
+      process.exit(1);
+    }
   });
 
 program.parse();

@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .test-mimir-home/
+.verify-mimir-home/
 *.log
 .DS_Store
 .env
