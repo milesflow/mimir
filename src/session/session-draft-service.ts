@@ -19,6 +19,7 @@ import { buildPublishedFilename } from "../notes/build-study-note.js";
 import { MIMIR_VERSION } from "../version.js";
 import {
   activeSessionExists,
+  clearActiveSession,
   readActiveSession,
   writeActiveSession,
   SessionIOError,
@@ -180,6 +181,36 @@ export async function finalizeSessionDraft(): Promise<{ publishedPath: string }>
   }
 
   return { publishedPath };
+}
+
+/**
+ * Abandon the active session without publishing: delete draft when present (with
+ * notesDir path checks) and remove active-session.json. Legacy sessions without
+ * draftPath only clear active-session.json.
+ */
+export async function cancelActiveSessionAndDiscard(): Promise<{
+  draftRemoved: boolean;
+}> {
+  const session = await readActiveSession();
+  if (session.draftPath) {
+    const config = await readConfig();
+    ensureDraftInNotesDir(config.notesDir, session.draftPath);
+    try {
+      await unlink(session.draftPath);
+    } catch (e: unknown) {
+      const err = e as NodeJS.ErrnoException;
+      if (err.code !== "ENOENT") {
+        throw new SessionIOError(
+          `Cannot remove draft at ${session.draftPath}: ${err.message}`,
+          { cause: e }
+        );
+      }
+    }
+    await clearActiveSession();
+    return { draftRemoved: true };
+  }
+  await clearActiveSession();
+  return { draftRemoved: false };
 }
 
 export class SessionDraftService {

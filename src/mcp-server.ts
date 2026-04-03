@@ -8,6 +8,7 @@ import { endSessionAndPublish } from "./commands/end.js";
 import type { SectionKey } from "./draft/layout.js";
 import { readActiveSession } from "./session/io.js";
 import {
+  cancelActiveSessionAndDiscard,
   createSessionWithDraft,
   SessionDraftService,
 } from "./session/session-draft-service.js";
@@ -302,6 +303,26 @@ async function main(): Promise<void> {
           {
             type: "text",
             text: JSON.stringify({ ok: true, publishedPath }, null, 2),
+          },
+        ],
+      };
+    }
+  );
+
+  server.registerTool(
+    "mimir_cancel_session",
+    {
+      description:
+        "Abandon the active study session without publishing a note: removes active-session.json and deletes the draft file when present (same rules as CLI `mimir cancel`).",
+      inputSchema: {},
+    },
+    async () => {
+      const { draftRemoved } = await cancelActiveSessionAndDiscard();
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({ ok: true, draftRemoved }, null, 2),
           },
         ],
       };

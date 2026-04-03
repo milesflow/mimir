@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 
+import { runCancel } from "./commands/cancel.js";
 import { runEnd } from "./commands/end.js";
 import { runInit } from "./commands/init.js";
 import {
@@ -96,6 +97,19 @@ program
   .action(async () => {
     try {
       await runEnd();
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error(msg);
+      process.exit(1);
+    }
+  });
+
+program
+  .command("cancel")
+  .description("Cancel the session without publishing (discards draft if present)")
+  .action(async () => {
+    try {
+      await runCancel();
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
       console.error(msg);

@@ -50,6 +50,7 @@ Mimir is a flow where work can become a learning session:
 | `mimir init`   | Initial setup                        |
 | `mimir start`  | Start a study session                |
 | `mimir status` | Show the active session              |
+| `mimir cancel` | Cancel session without publishing    |
 | `mimir end`    | End session and generate a note      |
 
 While a session is open, Mimir keeps a **draft Markdown file** under `<notesDir>/.mimir/drafts/<session-id>.md`. Update it with:
@@ -119,7 +120,7 @@ After `npm run build` and `npm link` (or using absolute paths), run the **stdio*
 
 If `mimir-mcp` is not on your `PATH`, set `"command"` to your Node binary and `"args": ["/absolute/path/to/mimir/dist/mcp-server.js"]` (or use `node` with the repo’s built file).
 
-Tools exposed: `mimir_start_session`, `mimir_get_session`, `mimir_end_session`, `mimir_add_reference`, `mimir_patch_section`, `mimir_append_section`, `mimir_set_metadata` (aligned with `mimir start` / `mimir end` / `mimir session` CLI).
+Tools exposed: `mimir_start_session`, `mimir_get_session`, `mimir_end_session`, `mimir_cancel_session`, `mimir_add_reference`, `mimir_patch_section`, `mimir_append_section`, `mimir_set_metadata` (aligned with `mimir start` / `mimir end` / `mimir cancel` / `mimir session` CLI).
 
 Develop without installing globally:
 

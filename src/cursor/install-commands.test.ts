@@ -13,19 +13,19 @@ test("cursorCommandsTemplatesDir contains .md templates", async () => {
   const dir = cursorCommandsTemplatesDir();
   const names = await readdir(dir);
   const md = names.filter((f) => f.endsWith(".md"));
-  assert.ok(md.length >= 3, `expected templates in ${dir}`);
+  assert.ok(md.length >= 4, `expected templates in ${dir}`);
 });
 
 test("installCursorCommands copies templates; second run skips; force overwrites", async () => {
   const dir = await mkdtemp(path.join(tmpdir(), "mimir-cursor-"));
   try {
     const r1 = await installCursorCommands(dir, false);
-    assert.ok(r1.installed.length >= 3);
+    assert.ok(r1.installed.length >= 4);
     assert.equal(r1.skipped.length, 0);
 
     const r2 = await installCursorCommands(dir, false);
     assert.equal(r2.installed.length, 0);
-    assert.ok(r2.skipped.length >= 3);
+    assert.ok(r2.skipped.length >= 4);
 
     await writeFile(
       path.join(dir, ".cursor", "commands", r2.skipped[0]!),
