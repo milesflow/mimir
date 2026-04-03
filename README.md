@@ -125,6 +125,18 @@ Develop without installing globally:
 npm run dev:mcp
 ```
 
+### Cursor slash commands (per repo)
+
+`npm install -g mimir` only puts the **`mimir`** binary on your `PATH`. Cursor discovers slash commands from **Markdown files** under **`.cursor/commands/`** in the workspace you open—not from the global install.
+
+From your **repository root**, install the bundled templates (start / status / end workflows):
+
+```bash
+mimir init --cursor
+```
+
+Add **`--cursor-force`** to overwrite existing command files. If new commands do not show up in the palette, reload the Cursor window.
+
 ---
 
 ## Post-MVP ideas

@@ -25,15 +25,39 @@ program
   .command("init")
   .description("Initial setup (notes directory, preferences)")
   .option("--notes-dir <path>", "Directory for study notes")
-  .action(async (opts: { notesDir?: string }) => {
-    try {
-      await runInit({ notesDir: opts.notesDir });
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : String(e);
-      console.error(msg);
-      process.exit(1);
+  .option(
+    "--cursor",
+    "Install Cursor slash-command templates into ./.cursor/commands (run from repo root)",
+    false
+  )
+  .option(
+    "--cursor-force",
+    "Overwrite existing Cursor command files (requires --cursor)",
+    false
+  )
+  .action(
+    async (opts: {
+      notesDir?: string;
+      cursor?: boolean;
+      cursorForce?: boolean;
+    }) => {
+      try {
+        if (opts.cursorForce === true && opts.cursor !== true) {
+          console.error("Error: --cursor-force requires --cursor");
+          process.exit(1);
+        }
+        await runInit({
+          notesDir: opts.notesDir,
+          cursor: opts.cursor === true,
+          cursorForce: opts.cursorForce === true,
+        });
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : String(e);
+        console.error(msg);
+        process.exit(1);
+      }
     }
-  });
+  );
 
 program
   .command("start")
