@@ -129,7 +129,22 @@ npm run dev:mcp
 
 `npm install -g mimir` only puts the **`mimir`** binary on your `PATH`. Cursor discovers slash commands from **Markdown files** under **`.cursor/commands/`** in the workspace you open—not from the global install.
 
-From your **repository root**, install the bundled templates (start / status / end workflows):
+Recommended first-time flow:
+
+1) Initialize global config once (optionally choose notes directory):
+
+```bash
+mimir init --notes-dir "$HOME/Documents/mimir-notes"
+```
+
+2) Move to a repository where you want slash commands and install templates there:
+
+```bash
+cd /path/to/your/repo
+mimir init --cursor
+```
+
+From your **repository root**, this installs bundled templates (start / status / end workflows):
 
 ```bash
 mimir init --cursor
