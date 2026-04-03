@@ -2,17 +2,14 @@
 name: /mimir-start
 id: mimir-start
 category: Workflow
-description: Start a Mimir study session (CLI or MCP)
+description: Start a Mimir study session (MCP)
 ---
 
 Start a Mimir study session for this workspace.
 
-**Preferred:** If the **Mimir MCP** server is available, call the tool **`mimir_start_session`** with a clear `topic` string (and `recordCwd` if you need cwd on the session).
+Use the **Mimir MCP** tool **`mimir_start_session`** with:
 
-**Otherwise:** Run from the project root:
+- **`topic`**: short title or question for this session (required).
+- **`recordCwd`**: optional boolean; default `true` (omit or `false` if you should not record the working directory).
 
-```bash
-mimir start --topic "<short title or question>"
-```
-
-Then confirm with `mimir_get_session` or `mimir status` that a session is active.
+Then call **`mimir_get_session`** to confirm the session is active and inspect `id`, `draftPath`, etc.

@@ -7,7 +7,10 @@ import { clearActiveSession, readActiveSession, SessionIOError } from "../sessio
 import { finalizeSessionDraft } from "../session/session-draft-service.js";
 import { MIMIR_VERSION } from "../version.js";
 
-export async function runEnd(): Promise<void> {
+/**
+ * End the active session and write the study note. Shared by CLI and MCP.
+ */
+export async function endSessionAndPublish(): Promise<{ publishedPath: string }> {
   const session = await readActiveSession();
 
   if (session.draftPath === undefined) {
@@ -29,14 +32,16 @@ export async function runEnd(): Promise<void> {
       );
     }
     await clearActiveSession();
-    console.log("Study session ended.");
-    console.log(`Note written: ${filePath}`);
-    return;
+    return { publishedPath: filePath };
   }
 
   const { publishedPath } = await finalizeSessionDraft();
   await clearActiveSession();
+  return { publishedPath };
+}
 
+export async function runEnd(): Promise<void> {
+  const { publishedPath } = await endSessionAndPublish();
   console.log("Study session ended.");
   console.log(`Note written: ${publishedPath}`);
 }

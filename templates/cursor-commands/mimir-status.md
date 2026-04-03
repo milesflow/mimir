@@ -2,15 +2,11 @@
 name: /mimir-status
 id: mimir-status
 category: Workflow
-description: Show the active Mimir study session (CLI or MCP)
+description: Show the active Mimir study session (MCP)
 ---
 
-Show whether a Mimir study session is active and key fields.
+Inspect the active Mimir study session via the **Mimir MCP** tool **`mimir_get_session`**.
 
-**Preferred:** Call **`mimir_get_session`** (optionally with full draft body if needed).
+- Set **`includeDraftBody`** to `true` only when you need the full draft Markdown (larger payload).
 
-**Otherwise:**
-
-```bash
-mimir status
-```
+Interpret the JSON: `active`, session fields (`id`, `topic`, `references`, `metadata`, `draftPath`, …), and optional `draft` body.

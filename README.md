@@ -117,7 +117,7 @@ After `npm run build` and `npm link` (or using absolute paths), run the **stdio*
 
 If `mimir-mcp` is not on your `PATH`, set `"command"` to your Node binary and `"args": ["/absolute/path/to/mimir/dist/mcp-server.js"]` (or use `node` with the repo’s built file).
 
-Tools exposed: `mimir_get_session`, `mimir_add_reference`, `mimir_patch_section`, `mimir_append_section`, `mimir_set_metadata` (same behavior as the `mimir session` CLI).
+Tools exposed: `mimir_start_session`, `mimir_get_session`, `mimir_end_session`, `mimir_add_reference`, `mimir_patch_section`, `mimir_append_section`, `mimir_set_metadata` (aligned with `mimir start` / `mimir end` / `mimir session` CLI).
 
 Develop without installing globally:
 

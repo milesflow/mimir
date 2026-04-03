@@ -4,6 +4,7 @@ import * as z from "zod";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
+import { endSessionAndPublish } from "./commands/end.js";
 import type { SectionKey } from "./draft/layout.js";
 import { readActiveSession } from "./session/io.js";
 import {
@@ -23,7 +24,7 @@ async function main(): Promise<void> {
     "mimir_start_session",
     {
       description:
-        "Start a new Mimir study session: writes active session state and creates a draft markdown file under the configured notes directory. If a session is already active, the call fails until it is ended (e.g. mimir end in CLI).",
+        "Start a new Mimir study session: writes active session state and creates a draft markdown file under the configured notes directory. If a session is already active, the call fails until it is ended (use mimir_end_session or mimir end).",
       inputSchema: {
         topic: z
           .string()
@@ -178,6 +179,26 @@ async function main(): Promise<void> {
       await svc.setMetadata(patch as Record<string, unknown>, replace === true);
       return {
         content: [{ type: "text", text: JSON.stringify({ ok: true }) }],
+      };
+    }
+  );
+
+  server.registerTool(
+    "mimir_end_session",
+    {
+      description:
+        "End the active study session and publish the Markdown note under the configured notes directory (same behavior as `mimir end`).",
+      inputSchema: {},
+    },
+    async () => {
+      const { publishedPath } = await endSessionAndPublish();
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify({ ok: true, publishedPath }, null, 2),
+          },
+        ],
       };
     }
   );

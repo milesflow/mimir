@@ -2,15 +2,11 @@
 name: /mimir-end
 id: mimir-end
 category: Workflow
-description: End the Mimir study session and write the study note (CLI)
+description: End the Mimir study session and publish the note (MCP)
 ---
 
-End the active study session and publish the Markdown note under the configured notes directory.
+End the active study session and write the published Markdown note under the configured notes directory.
 
-There is no MCP tool for **end** in the default server: use the CLI:
+Use the **Mimir MCP** tool **`mimir_end_session`** (no arguments). On success the result includes **`publishedPath`**.
 
-```bash
-mimir end
-```
-
-If no session is active, surface the CLI error and stop.
+If there is no active session or publishing fails, surface the tool error and stop.
