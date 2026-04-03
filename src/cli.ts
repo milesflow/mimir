@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 
+import { runInit } from "./commands/init.js";
+
 const program = new Command();
 
 program
@@ -13,8 +15,15 @@ program
 program
   .command("init")
   .description("Initial setup (notes directory, preferences)")
-  .action(() => {
-    console.log("mimir init — coming soon: create global configuration.");
+  .option("--notes-dir <path>", "Directory for study notes")
+  .action(async (opts: { notesDir?: string }) => {
+    try {
+      await runInit({ notesDir: opts.notesDir });
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      console.error(msg);
+      process.exit(1);
+    }
   });
 
 program
