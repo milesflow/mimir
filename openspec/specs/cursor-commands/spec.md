@@ -10,7 +10,7 @@ The published npm package SHALL include one or more Markdown files intended for 
 #### Scenario: Package contains templates
 
 - **WHEN** a consumer inspects the installed `mimir` package contents
-- **THEN** it SHALL include at least three template files covering starting a study session, showing session status, and ending a session (exact filenames are implementation-defined but SHALL remain stable across patch releases unless documented otherwise)
+- **THEN** it SHALL include at least four template files covering starting a study session, showing session status, ending a session, and canceling a session without publishing a note (exact filenames are implementation-defined but SHALL remain stable across patch releases unless documented otherwise)
 
 ### Requirement: Install into workspace `.cursor/commands/`
 
